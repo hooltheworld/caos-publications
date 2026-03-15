@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAOS at Aris — Collaborative Agentic Operations System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111111;--surface:#1A1A1A;--elevated:#222222;--border:#2E2E2E;--text-1:#FFFFFF;--text-2:#888888;--text-3:#555555;--amber:#E8A020;--teal:#17918A}
+:root[data-theme="light"]{--bg:#F5F5F3;--surface:#FFFFFF;--elevated:#FAFAF8;--border:#E0E0DC;--text-1:#111111;--text-2:#444444;--text-3:#888888}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;line-height:1.65;transition:background 0.3s,color 0.3s}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:100;padding:0 32px}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--text-1);display:flex;align-items:center;gap:10px}
+.amber-dot{width:7px;height:7px;background:var(--amber);border-radius:50%;flex-shrink:0}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-2);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:var(--text-1)}
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;font-size:10px;padding:4px 10px;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--amber);color:var(--amber)}
+
+/* LAYOUT */
+.page{max-width:960px;margin:0 auto;padding:0 32px}
+section{padding:64px 0;border-bottom:1px solid var(--border)}
+section:last-of-type{border-bottom:none}
+
+/* TYPOGRAPHY */
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:12px;display:block}
+h1,h2,h3,h4{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;font-weight:800;line-height:1.1}
+h1{font-size:52px;letter-spacing:1px}
+h2{font-size:32px;letter-spacing:0.5px;margin-bottom:6px}
+h3{font-size:20px;letter-spacing:0.5px}
+h4{font-size:14px;letter-spacing:0.3px;font-weight:700}
+.section-desc{color:var(--text-2);font-size:13px;max-width:620px;margin-top:10px;line-height:1.7}
+
+/* GRIDS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+
+/* CARDS */
+.card{background:var(--surface);padding:20px;position:relative}
+.card.amber-bar{border-left:3px solid var(--amber)}
+.card.teal-bar{border-left:3px solid var(--teal)}
+.card.amber-top{border-top:2px solid var(--amber)}
+.card.teal-top{border-top:2px solid var(--teal)}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.card-body{color:var(--text-2);font-size:12px;line-height:1.65}
+
+/* STATUS DOTS */
+.status-dot{width:7px;height:7px;border-radius:50%;position:absolute;top:14px;right:14px}
+.dot-teal{background:var(--teal)}.dot-amber{background:var(--amber)}.dot-dim{background:var(--text-3)}.dot-blue{background:#3B82F6}
+
+/* TAGS */
+.tag{display:inline-block;font-size:9px;font-weight:500;padding:2px 6px;text-transform:uppercase;letter-spacing:0.5px;margin-right:3px;margin-top:3px;border:1px solid}
+.tag-teal{color:#17918A;border-color:rgba(23,145,138,.35)}.tag-amber{color:#E8A020;border-color:rgba(232,160,32,.35)}.tag-muted{color:#888;border-color:#2E2E2E}
+.tag-cto{color:#A78BFA;border-color:rgba(167,139,250,.35);font-weight:700}
+
+/* CTO CALLOUT */
+.cto-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.35);padding:2px 8px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#A78BFA;margin-bottom:8px}
+.cto-section{border-left:3px solid #A78BFA;background:rgba(167,139,250,.06);padding:14px 16px;margin:12px 0}
+.cto-section-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A78BFA;margin-bottom:6px}
+.cto-section p{font-size:12px;color:var(--text-2);margin:0;line-height:1.6}
+
+/* CHECKLIST */
+.checklist{margin:0;padding:0;list-style:none}
+.checklist li{font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.checklist li:last-child{border-bottom:none}
+.check-icon{font-size:10px;font-weight:700;color:var(--teal);margin-top:2px;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px}
+
+/* HERO */
+#hero{padding:120px 0 64px;border-bottom:1px solid var(--border)}
+.hero-header{display:flex;gap:20px;align-items:flex-start;margin-bottom:40px}
+.hero-amber-bar{width:4px;height:72px;background:var(--amber);flex-shrink:0;margin-top:6px}
+.hero-subtitle{color:var(--text-2);font-size:14px;line-height:1.65;max-width:640px;margin-top:10px}
+.hero-meta{font-size:10px;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;margin-top:6px}
+.hero-def{background:var(--surface);border-left:3px solid var(--teal);padding:20px 24px;margin-top:32px;max-width:740px}
+.hero-def p{font-size:14px;line-height:1.7;font-style:italic;color:var(--text-1)}
+.hero-def .def-source{font-size:10px;color:var(--text-3);margin-top:8px;letter-spacing:1px;text-transform:uppercase}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:40px}
+.stat-card{background:var(--surface);padding:18px}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--amber);line-height:1}
+.stat-label{font-size:11px;color:var(--text-2);margin-top:4px;line-height:1.4}
+
+/* PUB LINKS */
+.pub-links{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-top:32px}
+.pub-link{background:var(--surface);padding:16px 18px;text-decoration:none;transition:background 0.2s;border-top:2px solid var(--border)}
+.pub-link:hover{background:var(--elevated);border-top-color:var(--amber)}
+.pub-link:hover .pub-link-title{color:var(--amber)}
+.pub-link-eyebrow{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
+.pub-link-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;color:var(--text-1);margin-bottom:4px;transition:color 0.2s}
+.pub-link-desc{font-size:11px;color:var(--text-2);line-height:1.5}
+.pub-link-arrow{font-size:11px;color:var(--teal);margin-top:8px;display:block}
+
+/* MODEL GRID */
+.model-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.model-card{background:var(--surface);padding:16px}
+.model-card.wrong{border-top:2px solid var(--text-3)}
+.model-card.right{border-top:2px solid var(--amber);border-left:3px solid var(--amber)}
+.model-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;margin-bottom:6px;line-height:1.2}
+.model-verdict{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.verdict-wrong{color:var(--text-3)}.verdict-right{color:var(--amber)}
+.model-body{font-size:11px;color:var(--text-2);line-height:1.55}
+
+/* PRINCIPLES */
+.principle-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.principle-card{background:var(--surface);padding:20px;display:flex;gap:14px;align-items:flex-start}
+.principle-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--amber);line-height:1;flex-shrink:0;min-width:32px}
+.principle-content h4{font-size:13px;margin-bottom:4px}
+.principle-content p{font-size:12px;color:var(--text-2);line-height:1.6;margin:0}
+
+/* ARCHITECTURE LAYERS */
+.arch-layer{background:var(--surface);padding:16px 20px;margin-bottom:2px;display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;transition:background 0.2s}
+.arch-layer:hover{background:var(--elevated)}
+.arch-layer-num{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:3px}
+.arch-layer-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
+.arch-layer-desc{font-size:12px;color:var(--text-2);line-height:1.6}
+
+/* HIERARCHY */
+.hier-card{background:var(--surface);padding:14px 18px;margin-bottom:2px;position:relative}
+.hier-card.amber-bar{border-left:3px solid var(--amber)}
+.hier-card.teal-bar{border-left:3px solid var(--teal)}
+.hier-card.blue-bar{border-left:3px solid #3B82F6}
+.hier-card.violet-bar{border-left:3px solid #A78BFA}
+.hier-card-level{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:3px}
+.hier-card-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;text-transform:uppercase;margin-bottom:5px}
+.hier-card-desc{font-size:11px;color:var(--text-2);line-height:1.6;max-width:580px}
+
+/* DECISION FLOW */
+.decision-section{margin-top:40px}
+.decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.decision-card{background:var(--surface);padding:18px}
+.decision-card.amber-top{border-top:2px solid var(--amber)}
+.decision-card.teal-top{border-top:2px solid var(--teal)}
+.decision-card.blue-top{border-top:2px solid #3B82F6}
+.decision-card.violet-top{border-top:2px solid #A78BFA}
+.decision-card.dim-top{border-top:2px solid var(--text-3)}
+.decision-type{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.decision-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.decision-flow{list-style:none;padding:0;margin:0}
+.decision-flow li{font-size:11px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;line-height:1.5}
+.decision-flow li:last-child{border-bottom:none}
+.flow-arrow{color:var(--teal);flex-shrink:0;font-size:11px}
+.flow-cto{color:#A78BFA;font-weight:700;flex-shrink:0;font-size:10px}
+.flow-ceo{color:var(--amber);font-weight:700;flex-shrink:0;font-size:10px}
+
+/* APPROVAL MATRIX */
+.approval-matrix{background:var(--surface);padding:0;margin-top:24px}
+.matrix-header{display:grid;grid-template-columns:1fr 100px 100px 100px;background:var(--elevated);padding:10px 16px;gap:8px}
+.matrix-header-cell{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);text-align:center}
+.matrix-header-cell:first-child{text-align:left}
+.matrix-row{display:grid;grid-template-columns:1fr 100px 100px 100px;padding:10px 16px;gap:8px;border-bottom:1px solid var(--border)}
+.matrix-row:last-child{border-bottom:none}
+.matrix-row:hover{background:var(--elevated)}
+.matrix-action{font-size:12px;color:var(--text-2)}
+.matrix-action strong{color:var(--text-1);display:block;font-size:12px}
+.matrix-cell{text-align:center;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.m-yes{color:var(--teal)}.m-req{color:var(--amber)}.m-no{color:var(--text-3)}.m-cto{color:#A78BFA}
+
+/* DIRECTORY */
+.dir-folder{background:var(--surface);margin-bottom:2px}
+.dir-folder-header{display:grid;grid-template-columns:180px 1fr 120px;gap:12px;padding:14px 16px;align-items:start;cursor:pointer;transition:background 0.2s}
+.dir-folder-header:hover{background:var(--elevated)}
+.dir-folder-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:8px}
+.dir-icon{font-size:11px;color:var(--text-3)}
+.dir-folder-desc{font-size:12px;color:var(--text-2);line-height:1.5}
+.dir-folder-meta{font-size:10px;color:var(--text-3);text-align:right;letter-spacing:0.5px}
+.dir-files{padding:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.dir-file{background:var(--elevated);padding:10px 12px;display:grid;grid-template-columns:1fr 80px;gap:8px;align-items:start}
+.dir-file-name{font-size:11px;font-family:'Courier New',monospace;color:var(--teal)}
+.dir-file-desc{font-size:10px;color:var(--text-2);line-height:1.4}
+.dir-file-rule{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:right}
+.rule-always{color:var(--teal)}.rule-domain{color:var(--amber)}.rule-demand{color:var(--text-3)}.rule-memory{color:#3B82F6}
+.dir-cto-note{font-size:10px;color:#A78BFA;margin-top:4px;font-style:italic}
+
+/* GITHUB SYNC */
+.sync-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.sync-card{background:var(--surface);padding:20px}
+.sync-command{background:var(--elevated);padding:14px 16px;margin:12px 0;font-family:'Courier New',monospace;font-size:12px;color:var(--teal);line-height:1.6}
+.sync-command .comment{color:var(--text-3)}
+.sync-info{display:grid;grid-template-columns:120px 1fr;gap:8px;margin-bottom:6px;font-size:12px}
+.sync-label{color:var(--text-3);font-weight:500}
+.sync-value{color:var(--text-1)}
+.sync-value a{color:var(--teal);text-decoration:none}
+.sync-value a:hover{color:var(--amber)}
+
+/* DOMAIN AGENTS */
+.domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.domain-card{background:var(--surface);padding:14px;position:relative}
+.domain-card.wave1{border-top:2px solid var(--teal)}
+.domain-card.wave2{border-top:2px solid var(--amber)}
+.domain-card.wave3{border-top:2px solid var(--text-3);background:transparent;border:1px dashed var(--border);border-top:2px solid var(--text-3)}
+.domain-num{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1px;margin-bottom:3px}
+.domain-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px}
+.domain-desc{font-size:11px;color:var(--text-2);line-height:1.5}
+
+/* ROADMAP */
+.roadmap-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.phase-card{background:var(--surface);padding:16px}
+.phase-num{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--text-3);line-height:1;margin-bottom:6px}
+.phase-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--amber);margin-bottom:8px}
+.phase-body{font-size:11px;color:var(--text-2);line-height:1.55}
+.phase-cond{font-size:10px;color:var(--teal);margin-top:8px;border-top:1px solid var(--border);padding-top:8px;line-height:1.5}
+
+/* RISKS */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.risk-card{background:var(--surface);padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.risk-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;margin-bottom:6px;color:var(--text-3)}
+.risk-fix{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:4px}
+.risk-body{font-size:11px;color:var(--text-2);line-height:1.55}
+
+/* ETHOS */
+.ethos-quote{background:var(--surface);border-left:3px solid var(--amber);padding:24px 28px;margin:24px 0}
+.ethos-quote blockquote{font-size:14px;line-height:1.7;font-style:italic;color:var(--text-1)}
+.ethos-quote cite{display:block;font-size:10px;color:var(--text-3);margin-top:10px;font-style:normal;letter-spacing:1px;text-transform:uppercase}
+.ethos-pillars{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.ethos-card{background:var(--surface);padding:18px}
+.ethos-aspect{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:5px}
+.ethos-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.ethos-body{font-size:12px;color:var(--text-2);line-height:1.6}
+
+/* NEXT STEPS */
+.next-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.live-dot{width:8px;height:8px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.next-card{background:var(--surface);padding:18px}
+.next-card.urgent{border-left:3px solid var(--teal)}
+.next-card.cto-card{border-left:3px solid #A78BFA}
+.next-timeframe{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.timeframe-now{color:var(--teal)}.timeframe-wave1{color:var(--amber)}.timeframe-ongoing{color:var(--text-3)}
+.next-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.next-items{list-style:none;padding:0;margin:0}
+.next-items li{font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.next-items li:last-child{border-bottom:none}
+.ni-bullet{flex-shrink:0;width:14px;height:14px;border:1px solid var(--border);margin-top:1px}
+.ni-bullet.done{background:var(--teal);border-color:var(--teal)}
+.ni-bullet.cto{border-color:#A78BFA}
+.cto-marker{font-size:9px;font-weight:700;color:#A78BFA;flex-shrink:0;margin-top:2px;letter-spacing:0.5px}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+/* RESEARCH */
+.research-cite{background:var(--surface);padding:14px 18px;margin:10px 0;border-left:2px solid var(--text-3);font-size:12px;color:var(--text-2);font-style:italic}
+.research-cite strong{color:var(--text-1);font-style:normal}
+
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:24px 32px}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.footer-left .footer-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.footer-left .footer-sub{font-size:11px;color:var(--text-2);margin-top:2px}
+.footer-right{font-size:11px;color:var(--text-3);text-align:right;line-height:1.7}
+
+@media(max-width:720px){.model-grid,.hero-stats,.decision-grid,.sync-grid,.domain-grid,.risk-grid,.ethos-pillars,.next-grid,.principle-grid{grid-template-columns:1fr}.nav-links{display:none}.risk-card{grid-template-columns:1fr}h1{font-size:36px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo"><div class="amber-dot"></div>Aris · CAOS</div>
+    <ul class="nav-links">
+      <li><a href="#what">What</a></li>
+      <li><a href="#why">Why</a></li>
+      <li><a href="#principles">Principles</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#decisions">Decisions</a></li>
+      <li><a href="#at-aris">At Aris</a></li>
+      <li><a href="#filesystem">File System</a></li>
+      <li><a href="#github">GitHub</a></li>
+      <li><a href="#ethos">Ethos</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#next">Next Steps</a></li>
+    </ul>
+    <button class="theme-toggle" onclick="toggleTheme()">Light / Dark</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="padding:0 32px">
+<section id="hero">
+<div class="page" style="padding:0">
+  <div class="hero-header">
+    <div class="hero-amber-bar"></div>
+    <div>
+      <span class="eyebrow">Aris Hydronics Inc. · Prepared for Matt, CTO</span>
+      <h1>CAOS</h1>
+      <p class="hero-subtitle">Collaborative Agentic Operations System — a governed, human-centered architecture in which human workers and AI agents operate as distinct but complementary contributors, each amplifying the other's capabilities in service of shared organizational purpose.</p>
+      <p class="hero-meta">Principal Architect: Robert Benjamin · Collaborative AI Architect: Claude V1.1.6452 · March 2026</p>
+    </div>
+  </div>
+  <div class="hero-def">
+    <p>"The product is not hardware. The product is not a service. The product is an experience — and AI can and now must amplify the positive impact of every individual team member."</p>
+    <span class="def-source">— Robert Benjamin, Founder/CEO, Aris Hydronics Inc.</span>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-card"><div class="stat-num">11</div><div class="stat-label">Operational domains covered across the Aris system</div></div>
+    <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Domain agents including QC — built and configured</div></div>
+    <div class="stat-card"><div class="stat-num">40</div><div class="stat-label">Context files encoding Aris knowledge and governance</div></div>
+    <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Activation waves across a 6-month implementation roadmap</div></div>
+  </div>
+
+  <!-- Publication links -->
+  <div style="margin-top:40px">
+    <span class="eyebrow">Full Documentation — Click to Read</span>
+    <div class="pub-links">
+      <a href="https://hooltheworld.github.io/caos-publications/caos-philosophical-guide.html" class="pub-link" target="_blank" rel="noopener">
+        <div class="pub-link-eyebrow">CAOS Publication 01</div>
+        <div class="pub-link-title">Philosophical Guide</div>
+        <div class="pub-link-desc">A CEO's guide to human-centered AI organizations. The case for augmentation over automation, the human impact research, and the six core principles.</div>
+        <span class="pub-link-arrow">Read full document →</span>
+      </a>
+      <a href="https://hooltheworld.github.io/caos-publications/caos-technical-blueprint.html" class="pub-link" target="_blank" rel="noopener">
+        <div class="pub-link-eyebrow">CAOS Publication 02</div>
+        <div class="pub-link-title">Technical Blueprint</div>
+        <div class="pub-link-desc">The complete architectural implementation guide. Hierarchy, file structure, governance, QC framework, LLM operations standards, and activation roadmap.</div>
+        <span class="pub-link-arrow">Read full document →</span>
+      </a>
+      <a href="https://hooltheworld.github.io/caos-publications/aris-ai-strategy-ethos-pub.html" class="pub-link" target="_blank" rel="noopener">
+        <div class="pub-link-eyebrow">Internal Reference</div>
+        <div class="pub-link-title">AI Strategy &amp; Ethos</div>
+        <div class="pub-link-desc">The Aris AI philosophy document. How organizations are deploying AI today, human impact research, privacy standards, and the Aris Ethos in full.</div>
+        <span class="pub-link-arrow">Read full document →</span>
+      </a>
+    </div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- WHY -->
+<div style="padding:0 32px">
+<section id="why">
+<div class="page" style="padding:0">
+  <div class="section-header" style="margin-bottom:32px">
+    <span class="eyebrow">The Starting Condition</span>
+    <h2>Why We Built This</h2>
+    <p class="section-desc">Aris operates across multiple complex and interdependent domains simultaneously — with a small team (~9 people) and significant bandwidth constraints. AI isn't a technology problem for us. It's a human capacity solution — if deployed with sufficient care.</p>
+  </div>
+  <div class="divider"></div>
+  <span class="eyebrow" style="margin-bottom:16px;display:block">Five ways organizations are deploying AI — and what Aris chose</span>
+  <div class="model-grid">
+    <div class="model-card wrong"><div class="model-label">Automation-First</div><div class="model-verdict verdict-wrong">❌ Not This</div><div class="model-body">Agents replace human tasks. Headcount reduced. Efficient until systems break and no one knows how to fix them manually. Human cost: employees become exception handlers, institutional knowledge erodes.</div></div>
+    <div class="model-card wrong"><div class="model-label">Agent-as-Employee</div><div class="model-verdict verdict-wrong">❌ Not This</div><div class="model-body">Agents given full personas with email addresses and external-facing identities. When something goes wrong, accountability is murky. Trust, once lost with a customer who discovers they were interacting with an agent, is rarely recovered.</div></div>
+    <div class="model-card wrong"><div class="model-label">Platform Model</div><div class="model-verdict verdict-wrong">❌ Not This</div><div class="model-body">Generic AI platforms embedded into existing tools. Fast to deploy. Cannot encode Aris-specific values, experience philosophy, or governance structure. Makes existing workflows faster — not more distinctively Aris.</div></div>
+    <div class="model-card wrong"><div class="model-label">Ad Hoc / Experimental</div><div class="model-verdict verdict-wrong">❌ Not This</div><div class="model-body">No unified strategy. Individual employees adopt AI organically. No shared context, no governance, no hierarchy. Where most small organizations currently are. Where data risks accumulate invisibly.</div></div>
+    <div class="model-card right"><div class="model-label">Augmentation Model</div><div class="model-verdict verdict-right">✓ CAOS</div><div class="model-body">Agents handle what they do genuinely better — tracking, dependencies, speed across digital tools, administrative throughput. Humans handle what they do genuinely better — judgment, relationships, creativity, accountability, and the irreplaceable quality of genuine care.</div></div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- WHAT -->
+<div style="padding:0 32px">
+<section id="what">
+<div class="page" style="padding:0">
+  <div class="section-header" style="margin-bottom:28px">
+    <span class="eyebrow">CAOS Defined</span>
+    <h2>What It Is</h2>
+    <p class="section-desc">CAOS is not an AI tool. It is not a platform. It is an organizational architecture — a governed, human-centered system for how Aris deploys AI agents across every operational domain.</p>
+  </div>
+  <div class="two-col">
+    <div class="card amber-bar" style="padding:20px 20px 20px 18px">
+      <div class="card-title" style="color:var(--amber);font-size:11px;letter-spacing:2px;margin-bottom:10px">What CAOS Is</div>
+      <ul class="checklist">
+        <li><span class="check-icon">→</span>A complete organizational architecture for human-AI collaboration</li>
+        <li><span class="check-icon">→</span>A governed system with a clear principal hierarchy and permission model</li>
+        <li><span class="check-icon">→</span>A philosophy that human wellbeing is a design constraint — not an afterthought</li>
+        <li><span class="check-icon">→</span>A phased trust model where agent autonomy is earned through demonstrated reliability</li>
+        <li><span class="check-icon">→</span>A provider-agnostic framework — logic lives in files, not platform code</li>
+        <li><span class="check-icon">→</span>Built from the ground up at Aris — a living, working implementation</li>
+      </ul>
+    </div>
+    <div class="card" style="padding:20px;border-left:3px solid var(--text-3)">
+      <div class="card-title" style="color:var(--text-3);font-size:11px;letter-spacing:2px;margin-bottom:10px">What CAOS Is Not</div>
+      <ul class="checklist">
+        <li><span class="check-icon" style="color:var(--text-3)">×</span>A replacement for human judgment, relationships, or accountability</li>
+        <li><span class="check-icon" style="color:var(--text-3)">×</span>A way to reduce headcount or eliminate human roles</li>
+        <li><span class="check-icon" style="color:var(--text-3)">×</span>An off-the-shelf product or SaaS platform</li>
+        <li><span class="check-icon" style="color:var(--text-3)">×</span>A completed system — it is designed to evolve as Aris grows</li>
+        <li><span class="check-icon" style="color:var(--text-3)">×</span>A surveillance system — it supports humans, it does not monitor them</li>
+        <li><span class="check-icon" style="color:var(--text-3)">×</span>Permanently coupled to any single AI provider</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- PRINCIPLES -->
+<div style="padding:0 32px">
+<section id="principles">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:28px">
+    <span class="eyebrow">Core Architecture</span>
+    <h2>The Six Principles</h2>
+    <p class="section-desc">These principles are non-negotiable. Adapting the specifics of any implementation is expected. Violating these principles produces a system that is no longer CAOS.</p>
+  </div>
+  <div class="principle-grid">
+    <div class="principle-card"><div class="principle-num">1</div><div class="principle-content"><h4>The Experience Is the Product</h4><p>For any organization whose value is built on human relationships, expertise, or trust — the AI system must be designed around the quality of the experience it enables, not the efficiency it produces. Efficiency is an outcome of good design. It is not the design goal.</p></div></div>
+    <div class="principle-card"><div class="principle-num">2</div><div class="principle-content"><h4>Amplification Over Automation</h4><p>Every agent is designed to make a human's contribution more valuable, not to eliminate the need for that contribution. Before any agent activates, it must pass this test: does this agent make the human's work better, or does it make the human less necessary?</p></div></div>
+    <div class="principle-card"><div class="principle-num">3</div><div class="principle-content"><h4>Governance by Design</h4><p>The hierarchy of authority, the permission structure, the quality control layer, and the escalation paths are built into the architecture before any agent goes live. Governance is not retrofitted after something goes wrong. It is the foundation.</p></div></div>
+    <div class="principle-card"><div class="principle-num">4</div><div class="principle-content"><h4>Phased Trust</h4><p>Autonomy is earned, not assumed. In Phase 1, agents organize, track, draft, and alert — they do not act externally. Each subsequent phase expands agent authority in specific, approved ways based on demonstrated reliability. Trust is built through transparency and track record.</p></div></div>
+    <div class="principle-card"><div class="principle-num">5</div><div class="principle-content"><h4>Human Wellbeing as a Design Constraint</h4><p>Human wellbeing — including psychological safety, skill preservation, attribution of contribution, and operational freedom — is a structural requirement that constrains agent design. If an agent deskills a human over time, it requires redesign. These are design failures, not implementation failures.</p></div></div>
+    <div class="principle-card"><div class="principle-num">6</div><div class="principle-content"><h4>LLM Agnosticism</h4><p>A CAOS architecture must not be permanently coupled to any single AI provider. The logic and governance lives in documentation and configuration — not platform-specific code. This protects organizational sovereignty, enables cost optimization, and ensures the system remains adaptable.</p></div></div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- ARCHITECTURE -->
+<div style="padding:0 32px">
+<section id="architecture">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:28px">
+    <span class="eyebrow">System Design</span>
+    <h2>The Architecture</h2>
+    <p class="section-desc">A CAOS implementation consists of six structural layers and a five-level principal hierarchy. Every element is designed to support tiered context loading — agents load only what they need for each task.</p>
+  </div>
+
+  <span class="eyebrow" style="margin-bottom:12px;display:block">Six Structural Layers</span>
+  <div class="arch-layer" style="border-left:3px solid var(--amber)"><div><div class="arch-layer-num">Layer 01</div><div class="arch-layer-name">Foundation Layer</div></div><div class="arch-layer-desc">Structured documentation that defines who the organization is, what it does, how it operates, what its values are, and how agents should behave. Human-readable, version-controlled, and the single source of truth for all agent behavior. Core files are always loaded — target under 2,000 tokens combined.</div></div>
+  <div class="arch-layer" style="border-left:3px solid var(--teal)"><div><div class="arch-layer-num">Layer 02</div><div class="arch-layer-name">Principal Hierarchy</div></div><div class="arch-layer-desc">A clear chain of authority: the CEO holds final approval authority. The Orchestrator Agent coordinates daily operations. The QC Agent monitors quality. Domain Agents operate within their defined areas. Sub-agents and employee agents operate under supervision. Every agent knows who it reports to and what it cannot do without explicit approval.</div></div>
+  <div class="arch-layer"><div><div class="arch-layer-num">Layer 03</div><div class="arch-layer-name">Domain Agent Layer</div></div><div class="arch-layer-desc">Specialized agents, each focused on a single operational area. Specialization improves performance, maintains clear accountability, and mirrors the organizational structure that will exist as the company grows. When a human lead joins Aris in any domain, they inherit an agent counterpart that already has deep context in their domain.</div></div>
+  <div class="arch-layer"><div><div class="arch-layer-num">Layer 04</div><div class="arch-layer-name">Quality Control Layer</div></div><div class="arch-layer-desc">An independent QC Agent evaluates domain agent outputs continuously — measuring format compliance, scope adherence, accuracy, and alignment with organizational values. Scores below 2.5 trigger CTO notification. Below 1.5 triggers CEO+CTO notification directly. Quality monitoring is automated, not dependent on human review of every output.</div></div>
+  <div class="arch-layer"><div><div class="arch-layer-num">Layer 05</div><div class="arch-layer-name">Collaboration Layer</div></div><div class="arch-layer-desc">For complex projects that span multiple domains, a structured shared workspace enables agents to collaborate without breaking governance boundaries. Created deliberately, governed explicitly, closed cleanly. Maximum five active workspaces in Phase 1.</div></div>
+  <div class="arch-layer"><div><div class="arch-layer-num">Layer 06</div><div class="arch-layer-name">Memory Layer</div></div><div class="arch-layer-desc">Each agent maintains a compressed memory file — a running record of established patterns, key decisions, and known context that persists across sessions. Hard limit: 800 tokens. The QC Agent monitors memory file size and flags bloat. This is how the system accumulates institutional knowledge without context pollution.</div></div>
+
+  <!-- Hierarchy -->
+  <div style="margin-top:40px">
+    <span class="eyebrow" style="margin-bottom:16px;display:block">The Principal Hierarchy — Five Levels</span>
+    <div class="hier-card amber-bar" style="margin-bottom:2px"><div class="status-dot dot-blue"></div><div class="hier-card-level">Level 1 — Human Authority</div><div class="hier-card-title">CEO / Founder (Robert Benjamin)</div><div class="hier-card-desc">Ultimate authority on all decisions. Final approval required for all external-facing actions in Phase 1. Sets the values and goals the system serves. All escalations terminate here. Policy compliance review authority on all scripts and agents.</div></div>
+    <div class="hier-card teal-bar" style="margin-bottom:2px"><div class="status-dot dot-teal"></div><div class="hier-card-level">Level 2 — System Agent</div><div class="hier-card-title">Orchestrator Agent</div><div class="hier-card-desc">Chief of Staff function. Delivers daily briefings and status snapshots. Identifies cross-domain conflicts and prepares recommendations. Creates and manages Project Workspaces. Integrates QC reports. Never takes external actions. Never resolves conflicts autonomously in Phase 1.</div></div>
+    <div class="hier-card blue-bar" style="margin-bottom:2px"><div class="status-dot dot-teal"></div><div class="hier-card-level">Level 3 — Quality Control</div><div class="hier-card-title">QC Agent</div><div class="hier-card-desc">Evaluates all domain agent outputs across five dimensions: format compliance, scope adherence, completeness, accuracy signals, and ethos alignment. Monitors behavioral patterns. Detects context file staleness and prompt injection attempts. Alert routing: score below 2.5 → CTO notified. Score below 1.5 → CEO + CTO notified directly. Never writes to domain spaces.</div><div style="margin-top:8px"><span class="cto-badge">⬥ CTO Receives Alerts</span></div></div>
+    <div class="hier-card" style="margin-bottom:2px;border-top:2px solid var(--teal)"><div class="status-dot dot-amber"></div><div class="hier-card-level">Level 4 — Operational Agents</div><div class="hier-card-title">Domain Agents (×11 at Aris)</div><div class="hier-card-desc">One agent per operational area. Operates within defined domain boundaries. Loads only relevant context files for each session. Maintains its own memory file. Escalates uncertain situations rather than guessing. When a human lead joins Aris in any domain, they inherit an agent counterpart with full context — including the CTO inheriting the Technology &amp; Systems agent.</div></div>
+    <div class="hier-card" style="border:1px dashed var(--border)"><div class="status-dot dot-dim"></div><div class="hier-card-level">Level 5 — Delegated Agents</div><div class="hier-card-title">Sub-Agents &amp; Employee Agents</div><div class="hier-card-desc">Specialized agents for specific recurring tasks, and agents created by team members for delegated work. All require registration and approval before activation. Three-zone framework: Zone 1 (personal productivity, no approval needed) → Zone 2 (organizational work, Principal approval required + registry registration) → Zone 3 (financial systems, external commitments — prohibited always).</div></div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- DECISION FLOWS -->
+<div style="padding:0 32px">
+<section id="decisions">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:28px">
+    <span class="eyebrow">Governance in Practice</span>
+    <h2>Decision &amp; Approval Framework</h2>
+    <p class="section-desc">Every significant action in the CAOS system follows a defined decision path. Phase 1 is deliberately conservative — all external actions require explicit CEO approval. The CTO holds technical authority over scripts, tools, and infrastructure decisions. Here is how the system governs itself.</p>
+  </div>
+
+  <!-- Decision cards -->
+  <div class="decision-grid">
+
+    <div class="decision-card amber-top">
+      <div class="decision-type" style="color:var(--amber)">External Action Decision</div>
+      <div class="decision-name">Any Externally Facing Action</div>
+      <ul class="decision-flow">
+        <li><span class="flow-arrow">→</span>Agent identifies required external action</li>
+        <li><span class="flow-arrow">→</span>Agent prepares: situation, options, recommended path, what is needed</li>
+        <li><span class="flow-arrow">→</span>Escalates to Orchestrator briefing</li>
+        <li><span class="flow-ceo">CEO</span>Explicit written approval required</li>
+        <li><span class="flow-arrow">→</span>Agent executes with logged confirmation</li>
+        <li><span class="flow-arrow">→</span>QC Agent monitors output</li>
+      </ul>
+      <div style="margin-top:10px;font-size:10px;color:var(--text-3);font-style:italic">Phase 1 rule: No exceptions. No agent acts externally without CEO sign-off.</div>
+    </div>
+
+    <div class="decision-card violet-top">
+      <div class="decision-type" style="color:#A78BFA">Script Governance</div>
+      <div class="decision-name">Activating Any Script</div>
+      <ul class="decision-flow">
+        <li><span class="flow-arrow">→</span>Script designed and registered in Script Registry (Draft status)</li>
+        <li><span class="flow-cto">CTO</span>Technical compliance review: credentials, logging, fail-safe behavior</li>
+        <li><span class="flow-ceo">CEO</span>Policy compliance review: does behavior align with org rules &amp; values?</li>
+        <li><span class="flow-arrow">→</span>Both approvals required — neither alone is sufficient</li>
+        <li><span class="flow-arrow">→</span>Script updated to Approved status in registry</li>
+        <li><span class="flow-arrow">→</span>Script goes live in production</li>
+      </ul>
+      <div style="margin-top:10px"><span class="cto-badge">⬥ CTO Owns Technical Review</span></div>
+    </div>
+
+    <div class="decision-card blue-top">
+      <div class="decision-type" style="color:#3B82F6">Quality Alert Routing</div>
+      <div class="decision-name">QC Score Thresholds</div>
+      <ul class="decision-flow">
+        <li><span class="flow-arrow">→</span>QC Agent scores every domain agent session (0–4 per dimension)</li>
+        <li><span class="flow-arrow">→</span>Score above 2.5 → Normal operation, logged</li>
+        <li><span class="flow-cto">CTO</span>Score 1.5–2.5 → CTO notified, technical investigation</li>
+        <li><span class="flow-ceo">CEO</span>Score below 1.5 → CEO + CTO notified directly, possible suspension</li>
+        <li><span class="flow-arrow">→</span>30-day baseline period: no thresholds enforced for new agents</li>
+        <li><span class="flow-arrow">→</span>Weekly QC report reviewed by CEO and CTO</li>
+      </ul>
+      <div style="margin-top:10px"><span class="cto-badge">⬥ CTO Reviews All QC Reports</span></div>
+    </div>
+
+    <div class="decision-card teal-top">
+      <div class="decision-type" style="color:var(--teal)">New Agent / Tool Addition</div>
+      <div class="decision-name">Expanding the System</div>
+      <ul class="decision-flow">
+        <li><span class="flow-arrow">→</span>Architect session opened by CEO to design new agent</li>
+        <li><span class="flow-cto">CTO</span>New tool added to Tools Integration Map with MCP Ready status</li>
+        <li><span class="flow-cto">CTO</span>Credential added to 1Password; scripts registered</li>
+        <li><span class="flow-ceo">CEO</span>Agent registered in Agent Registry; pre-activation checklist completed</li>
+        <li><span class="flow-arrow">→</span>QC eval criteria defined before activation</li>
+        <li><span class="flow-arrow">→</span>30-day baseline period; thresholds calibrated after</li>
+      </ul>
+      <div style="margin-top:10px"><span class="cto-badge">⬥ CTO Owns Tool Integration</span></div>
+    </div>
+
+    <div class="decision-card dim-top">
+      <div class="decision-type" style="color:var(--text-3)">Cross-Domain Project</div>
+      <div class="decision-name">Project Workspace Creation</div>
+      <ul class="decision-flow">
+        <li><span class="flow-arrow">→</span>Trigger: 3+ domains involved, hard external deadline, or simultaneous multi-domain action needed</li>
+        <li><span class="flow-arrow">→</span>Orchestrator creates shared Notion workspace</li>
+        <li><span class="flow-ceo">CEO</span>Approves workspace creation</li>
+        <li><span class="flow-arrow">→</span>Max 5 active workspaces in Phase 1</li>
+        <li><span class="flow-arrow">→</span>Domain agents contribute while retaining domain boundaries</li>
+        <li><span class="flow-arrow">→</span>Orchestrator closes workspace when project concludes</li>
+      </ul>
+    </div>
+
+    <div class="decision-card" style="border-top:2px solid var(--teal)">
+      <div class="decision-type" style="color:var(--teal)">Uncertainty Escalation</div>
+      <div class="decision-name">What Any Agent Does When Uncertain</div>
+      <ul class="decision-flow">
+        <li><span class="flow-arrow">→</span>Agent encounters ambiguity, missing info, or unauthorized decision point</li>
+        <li><span class="flow-arrow">→</span>Agent NEVER guesses — escalates immediately</li>
+        <li><span class="flow-arrow">→</span>Escalation includes: what was happening, what the uncertainty is, what options exist, what is needed to proceed</li>
+        <li><span class="flow-arrow">→</span>Orchestrator surfaces in next briefing</li>
+        <li><span class="flow-ceo">CEO</span>Decision returned with direction</li>
+        <li><span class="flow-arrow">→</span>Agent proceeds with explicit guidance logged</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- CTO Role Summary -->
+  <div style="margin-top:28px">
+    <div class="cto-section">
+      <div class="cto-section-title">⬥ Matt's Role as CTO — Summary of Key Responsibilities</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:10px">
+        <div style="background:var(--elevated);padding:12px 14px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#A78BFA;margin-bottom:6px">Technical Authority</div>
+          <ul class="checklist" style="gap:4px">
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Technical compliance review on all scripts (dual-approval with CEO)</li>
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Tool and integration architecture (MCP Ready status, 1Password credentials)</li>
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Receives all QC alerts at medium threshold (score 1.5–2.5)</li>
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Reviews weekly QC reports alongside CEO</li>
+          </ul>
+        </div>
+        <div style="background:var(--elevated);padding:12px 14px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#A78BFA;margin-bottom:6px">Wave 1 Build Responsibilities</div>
+          <ul class="checklist" style="gap:4px">
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Build shared utility scripts: llm-adapter.py, auth-helper.py, memory-update.py, session-logger.py, schedule-runner.py</li>
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Investigate QUO API availability for agent integration</li>
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Determine WhatsApp monitoring method</li>
+            <li><span class="check-icon" style="color:#A78BFA">→</span>Define Aris Cloud agent access architecture (before Wave 3)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+</div>
+
+<!-- AT ARIS -->
+<div style="padding:0 32px">
+<section id="at-aris">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:28px">
+    <span class="eyebrow">Implementation</span>
+    <h2>CAOS at Aris</h2>
+    <p class="section-desc">The Aris implementation is the originating case study for CAOS — the first full deployment of the framework. Eleven operational domains, three activation waves, six months. Every agent is designed around the four Aris experience pillars: Education, Design &amp; Bid, Install, and Support.</p>
+  </div>
+
+  <span class="eyebrow" style="margin-bottom:4px;display:block">Wave 1 — Foundation · Months 1–2</span>
+  <p style="font-size:11px;color:var(--text-2);margin-bottom:12px">Highest-volume, highest-priority operational areas. Activated simultaneously with the QC Agent and Orchestrator.</p>
+  <div class="domain-grid" style="margin-bottom:20px">
+    <div class="domain-card wave1"><div class="status-dot dot-teal"></div><div class="domain-num">01</div><div class="domain-name">Administration</div><div class="domain-desc">Email triage, scheduling, documentation, internal communications, task tracking.</div><div style="margin-top:8px"><span class="tag tag-muted">All Pillars</span></div></div>
+    <div class="domain-card wave1"><div class="status-dot dot-teal"></div><div class="domain-num">02</div><div class="domain-name">Finance &amp; Fundraising</div><div class="domain-desc">Cash flow monitoring, invoice tracking, financial health reporting, investor pipeline management.</div><div style="margin-top:8px"><span class="tag tag-muted">All Pillars</span></div></div>
+    <div class="domain-card wave1"><div class="status-dot dot-teal"></div><div class="domain-num">07</div><div class="domain-name">Project Management</div><div class="domain-desc">Active project tracking, milestone monitoring, resource coordination, dependency alerts across active installations.</div><div style="margin-top:8px"><span class="tag tag-amber">Install</span><span class="tag tag-muted">Support</span></div></div>
+    <div class="domain-card wave1"><div class="status-dot dot-teal"></div><div class="domain-num">10</div><div class="domain-name">Marketing &amp; Comms</div><div class="domain-desc">Content planning, brand voice, messaging across education and outreach channels.</div><div style="margin-top:8px"><span class="tag tag-teal">Education</span></div></div>
+    <div class="domain-card wave1"><div class="status-dot dot-blue"></div><div class="domain-num">00</div><div class="domain-name">QC Agent</div><div class="domain-desc">Evaluates all domain agent outputs across five dimensions. Activates simultaneously with Wave 1 agents.</div><div style="margin-top:8px"><span class="tag tag-muted">System Agent</span></div></div>
+  </div>
+
+  <span class="eyebrow" style="margin-bottom:4px;display:block">Wave 2 — Growth · Months 3–4</span>
+  <p style="font-size:11px;color:var(--text-2);margin-bottom:12px">Domains tied to scaling priorities. Added after Orchestrator has stable baseline from Wave 1.</p>
+  <div class="domain-grid" style="margin-bottom:20px">
+    <div class="domain-card wave2"><div class="status-dot dot-amber"></div><div class="domain-num">05</div><div class="domain-name">Sales &amp; Business Dev</div><div class="domain-desc">Pipeline tracking, proposal support, partner relationship management, bid coordination.</div><div style="margin-top:8px"><span class="tag tag-amber">Design &amp; Bid</span></div></div>
+    <div class="domain-card wave2"><div class="status-dot dot-amber"></div><div class="domain-num">06</div><div class="domain-name">Supply Chain</div><div class="domain-desc">Procurement tracking, supplier relationships, parts availability monitoring, lead time management.</div><div style="margin-top:8px"><span class="tag tag-amber">Install</span></div></div>
+    <div class="domain-card wave2"><div class="status-dot dot-amber"></div><div class="domain-num">08</div><div class="domain-name">Install &amp; Support</div><div class="domain-desc">Field coordination, installation tracking, post-install support monitoring, customer experience quality.</div><div style="margin-top:8px"><span class="tag tag-amber">Install</span><span class="tag tag-muted">Support</span></div></div>
+    <div class="domain-card wave2"><div class="status-dot dot-amber"></div><div class="domain-num">09</div><div class="domain-name">Grants &amp; R&amp;D</div><div class="domain-desc">Grant deadline tracking, compliance monitoring, R&amp;D documentation, reporting requirements management.</div><div style="margin-top:8px"><span class="tag tag-teal">Education</span></div></div>
+  </div>
+
+  <span class="eyebrow" style="margin-bottom:4px;display:block">Wave 3 — Maturity · Months 5–6</span>
+  <p style="font-size:11px;color:var(--text-2);margin-bottom:12px">Specialized domains requiring complex context. Activated after organizational experience with CAOS is established.</p>
+  <div class="domain-grid" style="margin-bottom:32px">
+    <div class="domain-card wave3"><div class="status-dot dot-dim"></div><div class="domain-num">03</div><div class="domain-name">Technology &amp; Systems</div><div class="domain-desc">Infrastructure monitoring, system integrations, technical documentation, platform management.</div><div style="margin-top:8px"><span class="cto-badge" style="font-size:8px;padding:1px 5px">⬥ CTO Domain</span></div></div>
+    <div class="domain-card wave3"><div class="status-dot dot-dim"></div><div class="domain-num">04</div><div class="domain-name">Product Development</div><div class="domain-desc">Product roadmap support, feature tracking, technical specification management, Aris Brain &amp; Aris Dial documentation.</div><div style="margin-top:8px"><span class="tag tag-amber">Design &amp; Bid</span></div></div>
+    <div class="domain-card wave3"><div class="status-dot dot-dim"></div><div class="domain-num">11</div><div class="domain-name">Legal &amp; IP</div><div class="domain-desc">Contract tracking, IP documentation management, compliance monitoring, legal deadline alerts.</div><div style="margin-top:8px"><span class="tag tag-muted">All Pillars</span></div></div>
+  </div>
+
+  <!-- Phased autonomy -->
+  <span class="eyebrow" style="margin-bottom:12px;display:block">Phased Autonomy Roadmap — How Agent Authority Expands</span>
+  <div class="roadmap-grid">
+    <div class="phase-card" style="border-top:2px solid var(--teal)"><div class="phase-num" style="color:var(--teal)">1</div><div class="phase-title">Foundation</div><div class="phase-body">Organize, track, draft, and alert. No external actions without explicit human approval. No exceptions.</div><div class="phase-cond">Entry: System activation. Duration: 30+ days demonstrated reliability.</div></div>
+    <div class="phase-card"><div class="phase-num">2</div><div class="phase-title">Internal Scheduling</div><div class="phase-body">Adjust internal schedules and reminders within defined guardrails. Still no external-facing actions.</div><div class="phase-cond">Condition: Phase 1 QC scores consistently above 3.0</div></div>
+    <div class="phase-card"><div class="phase-num">3</div><div class="phase-title">Publish</div><div class="phase-body">Publish approved content on approved schedule. Content must be pre-approved; timing flexibility only.</div><div class="phase-cond">Condition: Principal explicitly authorizes per agent</div></div>
+    <div class="phase-card"><div class="phase-num">4</div><div class="phase-title">Templated Outreach</div><div class="phase-body">Send pre-approved templated external communications within defined contexts and recipient types.</div><div class="phase-cond">Condition: Principal authorizes per communication type</div></div>
+    <div class="phase-card"><div class="phase-num">5</div><div class="phase-title">Defined Actions</div><div class="phase-body">Take defined external actions within pre-set guardrails. Each action category individually approved.</div><div class="phase-cond">Condition: Principal authorizes per action category</div></div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- FILE SYSTEM -->
+<div style="padding:0 32px">
+<section id="filesystem">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:28px">
+    <span class="eyebrow">Knowledge Architecture</span>
+    <h2>The File System</h2>
+    <p class="section-desc">The Aris agent system is a structured directory of 40 files organized into six folders. Every agent session begins by loading DIRECTORY.md — the master index that tells the agent exactly which files to load for the current task. This tiered loading model is what keeps performance sharp and costs controlled.</p>
+  </div>
+
+  <!-- Load rule legend -->
+  <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:6px"><span style="font-size:9px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase">ALWAYS</span><span style="font-size:11px;color:var(--text-2)">— Every session</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><span style="font-size:9px;font-weight:700;color:var(--amber);letter-spacing:1.5px;text-transform:uppercase">DOMAIN</span><span style="font-size:11px;color:var(--text-2)">— When task involves that area</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><span style="font-size:9px;font-weight:700;color:var(--text-3);letter-spacing:1.5px;text-transform:uppercase">ON DEMAND</span><span style="font-size:11px;color:var(--text-2)">— Only when specific content is needed</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><span style="font-size:9px;font-weight:700;color:#3B82F6;letter-spacing:1.5px;text-transform:uppercase">MEMORY</span><span style="font-size:11px;color:var(--text-2)">— Loaded at session start, updated at session end</span></div>
+  </div>
+
+  <!-- Folders -->
+  <div class="dir-folder">
+    <div class="dir-folder-header">
+      <div class="dir-folder-name"><span class="dir-icon">📋</span>DIRECTORY.md</div>
+      <div class="dir-folder-desc">Master index — the first file every agent loads in every session. Maps every file in the system with load rules. Agents read this, identify what the current task requires, and retrieve only those files.</div>
+      <div class="dir-folder-meta"><span class="rule-always">ALWAYS</span></div>
+    </div>
+  </div>
+
+  <div class="dir-folder">
+    <div class="dir-folder-header">
+      <div class="dir-folder-name"><span class="dir-icon">📁</span>core/</div>
+      <div class="dir-folder-desc">Five files always loaded by all agents. Defines who Aris is, how agents must behave, and how the Orchestrator runs. Target: under 2,000 tokens combined to prevent context pollution.</div>
+      <div class="dir-folder-meta"><span class="rule-always">5 FILES · ALWAYS</span></div>
+    </div>
+    <div class="dir-files">
+      <div class="dir-file"><div><div class="dir-file-name">aris-foundation.md</div><div class="dir-file-desc">Owner profile, business overview, team roster, revenue model, operational priorities — condensed</div></div><div><div class="dir-file-rule rule-always">ALWAYS</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">operations-and-rules.md</div><div class="dir-file-desc">Operations map, non-negotiable agent rules, four pillars, eleven domains, QC layer, collaboration model</div></div><div><div class="dir-file-rule rule-always">ALWAYS</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">orchestrator-core.md</div><div class="dir-file-desc">Orchestrator identity, daily briefing template, workspace protocol, QC integration</div></div><div><div class="dir-file-rule rule-always">ALWAYS</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">llm-operations-strategy.md</div><div class="dir-file-desc">Model routing (Heavy/Standard/Light), token economy, LLM agnosticism standards, cost management</div></div><div><div class="dir-file-rule rule-always">ALWAYS</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">project-workspace-protocol.md</div><div class="dir-file-desc">Cross-domain workspace creation triggers, governance, contribution rules, and lifecycle</div></div><div><div class="dir-file-rule rule-always">ALWAYS</div></div></div>
+    </div>
+  </div>
+
+  <div class="dir-folder">
+    <div class="dir-folder-header">
+      <div class="dir-folder-name"><span class="dir-icon">📁</span>domains/</div>
+      <div class="dir-folder-desc">One file per operational area. Loaded when the task involves that domain. Contains domain scope, workflows, tools access, escalation triggers, key metrics, and phase notes for the relevant agent.</div>
+      <div class="dir-folder-meta"><span class="rule-domain">12 FILES · DOMAIN</span></div>
+    </div>
+    <div class="dir-files">
+      <div class="dir-file"><div><div class="dir-file-name">00-qc-agent.md</div><div class="dir-file-desc">Quality Control Agent — evaluation criteria, scoring dimensions, alert routing</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">01-administration.md</div><div class="dir-file-desc">Admin scope: email, scheduling, internal comms, documentation — Wave 1</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">02-finance-fundraising.md</div><div class="dir-file-desc">Finance monitoring, cash flow, investor pipeline — Wave 1</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">03-technology-systems.md</div><div class="dir-file-desc">Infrastructure, integrations, platform management — Wave 3 <span class="dir-cto-note">⬥ CTO Domain</span></div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">04-product-development.md</div><div class="dir-file-desc">Product roadmap, Aris Brain/Dial, technical specifications — Wave 3</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">05-sales-bizdev.md</div><div class="dir-file-desc">Pipeline, proposals, bid coordination — Wave 2</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">06-supply-chain.md</div><div class="dir-file-desc">Procurement, suppliers, parts availability, lead times — Wave 2</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">07-project-management.md</div><div class="dir-file-desc">Active project tracking, milestones, dependencies — Wave 1</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">08-install-support.md</div><div class="dir-file-desc">Field coordination, installation tracking, customer experience — Wave 2</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">09-grants-rd.md</div><div class="dir-file-desc">Grant deadlines, compliance, R&amp;D documentation — Wave 2</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">10-marketing-comms.md</div><div class="dir-file-desc">Content planning, brand voice, outreach channels — Wave 1</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">11-legal-ip.md</div><div class="dir-file-desc">Contract tracking, IP management, compliance monitoring — Wave 3</div></div><div><div class="dir-file-rule rule-domain">DOMAIN</div></div></div>
+    </div>
+  </div>
+
+  <div class="dir-folder">
+    <div class="dir-folder-header">
+      <div class="dir-folder-name"><span class="dir-icon">📁</span>registry/</div>
+      <div class="dir-folder-desc">Governance and compliance records. Loaded on demand for agent questions, script compliance checks, or employee agent onboarding. The authoritative record of everything authorized to run in the system.</div>
+      <div class="dir-folder-meta"><span class="rule-demand">4 FILES · ON DEMAND</span></div>
+    </div>
+    <div class="dir-files">
+      <div class="dir-file"><div><div class="dir-file-name">agent-registry.md</div><div class="dir-file-desc">All agent profiles, permissions, tool access, and authorization status. If not registered, not authorized.</div></div><div><div class="dir-file-rule rule-demand">ON DEMAND</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">script-registry.md</div><div class="dir-file-desc">All scripts: systems touched, permission levels, compliance status, dual-approval record <span class="dir-cto-note">⬥ CTO reviews</span></div></div><div><div class="dir-file-rule rule-demand">ON DEMAND</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">eval-protocols.md</div><div class="dir-file-desc">Evaluation criteria per domain agent — what correct output looks like, failure modes to watch for</div></div><div><div class="dir-file-rule rule-demand">ON DEMAND</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">employee-agent-guidelines.md</div><div class="dir-file-desc">Three-zone framework, approval process, alignment rules for team member AI use</div></div><div><div class="dir-file-rule rule-demand">ON DEMAND</div></div></div>
+    </div>
+  </div>
+
+  <div class="dir-folder">
+    <div class="dir-folder-header">
+      <div class="dir-folder-name"><span class="dir-icon">📁</span>reference/</div>
+      <div class="dir-folder-desc">On-demand reference documents loaded only when the specific content is needed. Not part of the always-loaded core — keeps token consumption lean.</div>
+      <div class="dir-folder-meta"><span class="rule-demand">2 FILES · ON DEMAND</span></div>
+    </div>
+    <div class="dir-files">
+      <div class="dir-file"><div><div class="dir-file-name">tools-integrations-map.md</div><div class="dir-file-desc">All platforms, access levels, MCP Ready status, credential methods <span class="dir-cto-note">⬥ CTO maintains</span></div></div><div><div class="dir-file-rule rule-demand">ON DEMAND</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">ai-strategy-ethos.md</div><div class="dir-file-desc">Organizational AI philosophy, human impact, deployment approaches, privacy/security standards</div></div><div><div class="dir-file-rule rule-demand">ON DEMAND</div></div></div>
+    </div>
+  </div>
+
+  <div class="dir-folder">
+    <div class="dir-folder-header">
+      <div class="dir-folder-name"><span class="dir-icon">📁</span>config/</div>
+      <div class="dir-folder-desc">YAML configuration files for scheduling and token budgets. CTO manages configuration for technical compliance. Budget monitor script runs daily, posts weekly cost summary to CEO.</div>
+      <div class="dir-folder-meta"><span class="rule-demand">2 FILES · CONFIG</span></div>
+    </div>
+    <div class="dir-files">
+      <div class="dir-file"><div><div class="dir-file-name">schedule.yaml</div><div class="dir-file-desc">Agent run times, cadences, active/inactive status for each agent</div></div><div><div class="dir-file-rule" style="color:var(--text-3)">CONFIG</div></div></div>
+      <div class="dir-file"><div><div class="dir-file-name">token-budgets.yaml</div><div class="dir-file-desc">Weekly token budgets per agent. Alert at 120%, auto-suspend at 150% <span class="dir-cto-note">⬥ CTO monitors</span></div></div><div><div class="dir-file-rule" style="color:var(--text-3)">CONFIG</div></div></div>
+    </div>
+  </div>
+
+  <div class="dir-folder">
+    <div class="dir-folder-header">
+      <div class="dir-folder-name"><span class="dir-icon">📁</span>memory/</div>
+      <div class="dir-folder-desc">Persistent agent memory files — one per agent (13 files + Orchestrator). Loaded with the domain at session start, updated at session end. Hard limit: 800 tokens each. QC Agent monitors for bloat.</div>
+      <div class="dir-folder-meta"><span class="rule-memory">13 FILES · MEMORY</span></div>
+    </div>
+  </div>
+
+</div>
+</section>
+</div>
+
+<!-- GITHUB SYNC -->
+<div style="padding:0 32px">
+<section id="github">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:28px">
+    <span class="eyebrow">Version Control &amp; Sync</span>
+    <h2>GitHub &amp; Sync Workflow</h2>
+    <p class="section-desc">All 40 context files are version-controlled in a private GitHub repository under the Aris account. A custom sync script keeps local machines and the Architect environment in sync with the authoritative repository. Every meaningful change gets a commit — this is the governance trail for the system.</p>
+  </div>
+
+  <div class="sync-grid">
+    <div class="sync-card amber-bar" style="border-left:3px solid var(--amber)">
+      <div class="card-title" style="font-size:12px;letter-spacing:1px;color:var(--amber);margin-bottom:14px">Repository Details</div>
+      <div class="sync-info"><span class="sync-label">GitHub Org</span><span class="sync-value"><a href="https://github.com/hooltheworld" target="_blank">hooltheworld</a></span></div>
+      <div class="sync-info"><span class="sync-label">Repository</span><span class="sync-value"><a href="https://github.com/hooltheworld/aris-agent-system" target="_blank">aris-agent-system</a></span></div>
+      <div class="sync-info"><span class="sync-label">Visibility</span><span class="sync-value">Private</span></div>
+      <div class="sync-info"><span class="sync-label">Branch</span><span class="sync-value">main (production context files)</span></div>
+      <div class="sync-info"><span class="sync-label">Local Path</span><span class="sync-value">~/Documents/Claude Collaboration/aris-agent-system/</span></div>
+      <div class="sync-info"><span class="sync-label">Auth</span><span class="sync-value">Personal access token → stored in 1Password</span></div>
+      <div class="sync-info"><span class="sync-label">File Format</span><span class="sync-value">Markdown (.md) for all context, YAML for config</span></div>
+      <div class="sync-info"><span class="sync-label">Total Files</span><span class="sync-value">40 (context + config)</span></div>
+    </div>
+
+    <div class="sync-card">
+      <div class="card-title" style="font-size:12px;letter-spacing:1px;color:var(--teal);margin-bottom:14px">Sync Script — sync-aris-context.py</div>
+      <div style="font-size:11px;color:var(--text-2);margin-bottom:10px">Three commands for managing the repository locally. Run from any machine after setting the GITHUB_TOKEN environment variable from 1Password.</div>
+      <div class="sync-command"><span class="comment"># Pull latest from GitHub to local machine</span><br>python3 sync-aris-context.py</div>
+      <div class="sync-command"><span class="comment"># Push local changes back to GitHub</span><br>python3 sync-aris-context.py --push "what changed and why"</div>
+      <div class="sync-command"><span class="comment"># Check sync status and file count</span><br>python3 sync-aris-context.py --status</div>
+      <div style="margin-top:12px"><span class="cto-badge">⬥ CTO Deploys &amp; Maintains Sync Script</span></div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;background:var(--surface);padding:16px 20px">
+    <div class="card-title" style="font-size:11px;letter-spacing:1px;color:var(--text-3);margin-bottom:10px">Architect Workflow — How Context Files Are Updated</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:2px">
+      <div style="background:var(--elevated);padding:10px 12px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">01</div><div style="font-size:10px;color:var(--text-2);line-height:1.4">Open Architect session in Claude Projects</div></div>
+      <div style="background:var(--elevated);padding:10px 12px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">02</div><div style="font-size:10px;color:var(--text-2);line-height:1.4">Design changes with full system context loaded</div></div>
+      <div style="background:var(--elevated);padding:10px 12px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">03</div><div style="font-size:10px;color:var(--text-2);line-height:1.4">Update affected files in the Architect session</div></div>
+      <div style="background:var(--elevated);padding:10px 12px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">04</div><div style="font-size:10px;color:var(--text-2);line-height:1.4">Commit to GitHub with descriptive message</div></div>
+      <div style="background:var(--elevated);padding:10px 12px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">05</div><div style="font-size:10px;color:var(--text-2);line-height:1.4">Run sync script → pull to local machine</div></div>
+      <div style="background:var(--elevated);padding:10px 12px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">06</div><div style="font-size:10px;color:var(--text-2);line-height:1.4">Note in Session Log. Agents use updated context on next run.</div></div>
+    </div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- RISKS -->
+<div style="padding:0 32px">
+<section id="risks">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:28px">
+    <span class="eyebrow">Governance</span>
+    <h2>The Risks — And How CAOS Addresses Them</h2>
+    <p class="section-desc">Aris acknowledges these risks explicitly, because naming them is the first step to managing them. Every risk identified below is directly addressed by a structural feature of the CAOS architecture.</p>
+  </div>
+  <div class="risk-grid">
+    <div class="risk-card"><div><div class="risk-name">Reduced Operational Freedom</div><div class="risk-body">As agents track and structure more of the work, employees may feel they have less latitude to experiment, make quiet mistakes, or develop their own working style.</div></div><div><div class="risk-fix">→ CAOS Response</div><div class="risk-body">The phased autonomy model — humans retain broad authority in Phase 1, with agent autonomy expanding incrementally in specific approved ways. Designed to make human work easier, not more surveilled.</div></div></div>
+    <div class="risk-card"><div><div class="risk-name">Speed &amp; Scope Mismatch</div><div class="risk-body">Agents can generate, track, and surface information faster than humans can absorb and act on it. An overwhelming briefing is counterproductive.</div></div><div><div class="risk-fix">→ CAOS Response</div><div class="risk-body">The Orchestrator briefing model — agents process at machine speed, but surface to humans in structured, scannable daily briefings designed for human cognitive bandwidth. A curated decision queue, not a data dump.</div></div></div>
+    <div class="risk-card"><div><div class="risk-name">Foundational Errors at Scale</div><div class="risk-body">If an agent's context file contains an inaccuracy, that error propagates across every task until it is caught.</div></div><div><div class="risk-fix">→ CAOS Response</div><div class="risk-body">The QC Agent and version-controlled context files. Context file staleness is monitored automatically. Quality degradation triggers alerts before it affects operations. Scores below 1.5 escalate to CEO+CTO.</div></div></div>
+    <div class="risk-card"><div><div class="risk-name">Weaponization</div><div class="risk-body">Internal or external actors using agents in ways that do not serve organizational goals — including prompt injection attacks where malicious content hijacks agent behavior.</div></div><div><div class="risk-fix">→ CAOS Response</div><div class="risk-body">The Agent Registry, Script Registry, dual-approval process (CTO technical review + CEO policy review), and prompt injection detection in the QC layer. External content is always treated as untrusted input.</div></div></div>
+    <div class="risk-card"><div><div class="risk-name">Attribution Obscurity</div><div class="risk-body">When an agent drafts a proposal, an employee refines it, and the CEO approves it — whose work is it? This directly affects how performance is evaluated and how the organization values its people.</div></div><div><div class="risk-fix">→ CAOS Response</div><div class="risk-body">Every agent action is logged, every output is attributed, and the organizational culture around agent use explicitly names and values the human contribution that agents support. The agent makes work better, not invisible.</div></div></div>
+    <div class="risk-card"><div><div class="risk-name">Over-Reliance &amp; Lock-In</div><div class="risk-body">An organization that routes every task through AI loses the capacity to function without it — and debilitates independent human thought and problem-solving over time.</div></div><div><div class="risk-fix">→ CAOS Response</div><div class="risk-body">LLM agnosticism (no permanent provider coupling), phased activation model (humans retain competencies through supervised phases), and explicit token budget management that monitors and controls AI operational costs.</div></div></div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- ETHOS -->
+<div style="padding:0 32px">
+<section id="ethos">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:24px">
+    <span class="eyebrow">The Aris AI Ethos</span>
+    <h2>Why We Do It This Way</h2>
+    <p class="section-desc">Rules tell agents what to do. The ethos tells them why. Every agent operating in the Aris system is initialized with this philosophy — and every architectural decision made in building CAOS was evaluated against it.</p>
+  </div>
+  <div class="ethos-quote"><blockquote>"AI can and now must amplify the positive impact of every individual team member. AI has natural talents with tracking details and dependencies which humans do not. AI can use most digital tools faster than humans can. But AI is not a human. It is not a person — though we will inevitably personify it. The role of AI in this organization — and should be for every organization — is to allow for more quality human contributions, more needed human interactions, and provide more stability in structure and engagement so the organization can do much more, at a much greater speed, with less resources and less stress than could otherwise be possible — and ultimately to better value the human contributions to the organization."</blockquote><cite>— Robert Benjamin, Founder/CEO, Aris Hydronics Inc.</cite></div>
+  <div class="ethos-pillars">
+    <div class="ethos-card"><div class="ethos-aspect">What AI Does Genuinely Well</div><div class="ethos-title">Natural AI Strengths</div><div class="ethos-body">Tracking details and dependencies across complex, multi-variable systems without fatigue. Speed across digital tools — agents can query, synthesize, and organize across dozens of platforms faster than any human. Consistency — agents apply rules the same way every time. Availability — agents do not need sleep, do not have bad days, and do not lose focus after hour six. AI-assisted creation in coding and digital product development.</div></div>
+    <div class="ethos-card"><div class="ethos-aspect">What AI Cannot Replace</div><div class="ethos-title">The Human Irreducibles</div><div class="ethos-body">AI is not a human. AI is not a person. AI does not have judgment in the full human sense — it pattern-matches against training and context. AI does not have genuine understanding of the Aris experience — it can be taught to serve it, but the experience itself is human. AI does not bear accountability. Humans do. The Aris experience — built on human connection, trust, and expertise — is protected by this ethos, not threatened by it.</div></div>
+    <div class="ethos-card"><div class="ethos-aspect">The Positive Case</div><div class="ethos-title">When It Works</div><div class="ethos-body">When agents are designed around the augmentation model, something genuinely good happens to people at work. The tasks that drain humans — administrative repetition, tracking a hundred small dependencies, the anxiety of things falling through cracks — get absorbed by agents. What remains for the human is the work that actually requires a human. People feel more capable, not less.</div></div>
+    <div class="ethos-card"><div class="ethos-aspect">The Standard We Hold Ourselves To</div><div class="ethos-title">The Activation Test</div><div class="ethos-body">Before any agent activates: Does this agent make the human's contribution more valuable, not less visible? Does this agent operate within a defined scope with human oversight at its boundary? Does this agent escalate uncertainty rather than guess? Does this agent protect sensitive data and never act beyond its permissions? Does this agent serve the Aris experience?</div></div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- RESEARCH NOTES -->
+<div style="padding:0 32px">
+<section id="research">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:24px">
+    <span class="eyebrow">Independent Validation</span>
+    <h2>What the Research Says</h2>
+    <p class="section-desc">CAOS is grounded in the best available research on agentic AI and organizational design. The framework was built from primary organizational need and validated against leading research simultaneously.</p>
+  </div>
+  <div class="three-col">
+    <div class="research-cite" style="border-left:2px solid var(--teal)"><strong>MIT Sloan + BCG, 2025:</strong> "The organizations that thrive will be those that focus less on the technology itself and more on the human systems that surround it." — Global study of 2,000+ leaders from 100+ countries on the Emerging Agentic Enterprise.</div>
+    <div class="research-cite" style="border-left:2px solid var(--teal)"><strong>Ethan Mollick, Wharton:</strong> Organizations failing at AI adoption are "using electric light merely to extend working hours rather than rethinking the entire assembly line." Companies furthest behind are automating legacy processes rather than reimagining workflows.</div>
+    <div class="research-cite" style="border-left:2px solid var(--teal)"><strong>McKinsey, September 2025:</strong> Technology develops exponentially, but organizations evolve linearly. The gap between those two curves is where most AI initiatives stall or fail. The answer is not faster AI adoption — it is smarter organizational design.</div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- NEXT STEPS -->
+<div style="padding:0 32px">
+<section id="next">
+<div class="page" style="padding:0">
+  <div style="margin-bottom:24px">
+    <div class="next-header">
+      <div class="live-dot"></div>
+      <div>
+        <span class="eyebrow" style="margin-bottom:0">Live Status — March 15, 2026</span>
+        <h2 style="margin-bottom:0">Next Steps</h2>
+      </div>
+    </div>
+    <p class="section-desc">The first Architect Project session launched today. The system has 40 context files built and committed. Here is what comes next — with CTO-owned items clearly marked.</p>
+  </div>
+
+  <div class="next-grid">
+
+    <div class="next-card urgent">
+      <div class="next-timeframe timeframe-now">⬥ Immediate — This Week</div>
+      <div class="next-title">Infrastructure Setup</div>
+      <ul class="next-items">
+        <li><div class="ni-bullet done"></div>First Architect Project session launched today</li>
+        <li><div class="ni-bullet done"></div>40 context files built and structured</li>
+        <li><div class="ni-bullet"></div>Create private GitHub repo <span style="font-family:monospace;font-size:11px;color:var(--teal)">hooltheworld/aris-agent-system</span></li>
+        <li><div class="ni-bullet"></div>Upload all 40 files with correct folder structure</li>
+        <li><div class="ni-bullet"></div>Create GitHub personal access token → store in 1Password</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Deploy sync-aris-context.py to laptop; test end-to-end</li>
+        <li><div class="ni-bullet"></div>Fill in GitHub repo URL placeholder in architect-context.md</li>
+      </ul>
+    </div>
+
+    <div class="next-card cto-card">
+      <div class="next-timeframe" style="color:#A78BFA">⬥ CTO Briefing — Top Priority Items</div>
+      <div class="next-title">Matt's Near-Term Agenda</div>
+      <ul class="next-items">
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Review this CAOS overview document — full system briefing</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Build shared utility scripts: llm-adapter.py, auth-helper.py, memory-update.py, session-logger.py, schedule-runner.py</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Technical compliance review of Wave 1 scripts</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Investigate QUO API availability for agent integration</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Determine WhatsApp monitoring method for agent integration</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Confirm tool ownership with Lead Product Engineer</li>
+      </ul>
+    </div>
+
+    <div class="next-card">
+      <div class="next-timeframe timeframe-wave1">Wave 1 Preparation — Next 2–4 Weeks</div>
+      <div class="next-title">Pre-Activation Checklist</div>
+      <ul class="next-items">
+        <li><div class="ni-bullet"></div>Complete grant portal inventory session (OR, WA, CEC, DOE, FedConnect, ASAP)</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Technical review of all Wave 1 scripts → Approved status in Script Registry</li>
+        <li><div class="ni-bullet"></div>CEO policy review of Wave 1 scripts</li>
+        <li><div class="ni-bullet"></div>QC Agent eval criteria finalized for Wave 1 agents</li>
+        <li><div class="ni-bullet"></div>Wave 1 activation: Admin, Finance, Project Mgmt, Marketing, QC Agent</li>
+      </ul>
+    </div>
+
+    <div class="next-card">
+      <div class="next-timeframe timeframe-wave1">Wave 1 Running — Months 1–2</div>
+      <div class="next-title">Quality &amp; Cost Baseline</div>
+      <ul class="next-items">
+        <li><div class="ni-bullet"></div>Establish 30-day QC baselines for all Wave 1 agents (no thresholds enforced during baseline)</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Calibrate QC alert thresholds after 30-day baseline</li>
+        <li><div class="ni-bullet cto"></div><span class="cto-marker">CTO</span>Review first weekly QC report alongside CEO</li>
+        <li><div class="ni-bullet"></div>Review first monthly token cost report</li>
+        <li><div class="ni-bullet"></div>Identify first cross-domain project for Project Workspace test</li>
+        <li><div class="ni-bullet"></div>Begin Wave 2 eval criteria development in Architect</li>
+      </ul>
+    </div>
+
+    <div class="next-card" style="grid-column:1/-1">
+      <div class="next-timeframe timeframe-ongoing">Ongoing — Quarterly Cadence</div>
+      <div class="next-title" style="margin-bottom:12px">Sustained Operations</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px">
+        <div style="background:var(--elevated);padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Context Review</div><div style="font-size:11px;color:var(--text-2);line-height:1.5">Quarterly check for staleness across all 40 files. QC Agent flags automatically; Architect session reviews and updates.</div></div>
+        <div style="background:var(--elevated);padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Eval Criteria</div><div style="font-size:11px;color:var(--text-2);line-height:1.5">Quarterly eval criteria update. Built for Wave 2 and Wave 3 agents during their 30-day baseline periods.</div></div>
+        <div style="background:var(--elevated);padding:12px"><div style="font-size:10px;font-weight:700;color:#A78BFA;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Provider Cost Review <span style="color:#A78BFA">· CTO</span></div><div style="font-size:11px;color:var(--text-2);line-height:1.5">Quarterly LLM provider cost review. Token budget vs. actual spend vs. value delivered. LLM agnosticism means we can optimize providers without rebuilding agent logic.</div></div>
+        <div style="background:var(--elevated);padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Architecture Review</div><div style="font-size:11px;color:var(--text-2);line-height:1.5">Annual agent system architecture review. Session Log in architect-context.md is the institutional memory of design decisions — every significant change is committed to GitHub.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-title">Aris Hydronics Inc. · CAOS Overview · Prepared for Matt, CTO</div>
+      <div class="footer-sub">Collaborative Agentic Operations System · March 2026 · Confidential</div>
+    </div>
+    <div class="footer-right">Principal Architect: Robert Benjamin, Founder/CEO<br>Collaborative AI Architect: Claude V1.1.6452</div>
+  </div>
+</footer>
+
+<script>
+function toggleTheme(){const h=document.documentElement;h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark')}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){e.preventDefault();const t=document.querySelector(this.getAttribute('href'));if(t){const top=t.getBoundingClientRect().top+window.pageYOffset-64;window.scrollTo({top,behavior:'smooth'})}})});
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:0.08});
+document.querySelectorAll('.arch-layer,.principle-card,.domain-card,.risk-card,.ethos-card,.phase-card,.stat-card,.model-card,.decision-card,.dir-folder,.next-card').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(8px)';el.style.transition='opacity 0.4s ease,transform 0.4s ease';obs.observe(el)});
+</script>
+</body>
+</html>

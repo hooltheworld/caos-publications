@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAOS: Technical Blueprint — Aris Hydronics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111111;--surface:#1A1A1A;--elevated:#222222;--border:#2E2E2E;--text-1:#FFFFFF;--text-2:#888888;--text-3:#555555;--amber:#E8A020;--teal:#17918A}
+:root[data-theme="light"]{--bg:#F5F5F3;--surface:#FFFFFF;--elevated:#FAFAF8;--border:#E0E0DC;--text-1:#111111;--text-2:#444444;--text-3:#888888}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text-1);font-family:'Inter',sans-serif;font-size:14px;line-height:1.75;transition:background 0.3s,color 0.3s}
+.nav{position:fixed;top:0;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:100;padding:0 32px}
+.nav-inner{max-width:800px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--text-1);display:flex;align-items:center;gap:10px;text-decoration:none}
+.amber-dot{width:7px;height:7px;background:var(--amber);border-radius:50%;flex-shrink:0}
+.nav-back{font-size:11px;color:var(--text-2);text-decoration:none;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:6px;transition:color 0.2s}
+.nav-back:hover{color:var(--amber)}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;padding:5px 12px;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.page{max-width:800px;margin:0 auto;padding:120px 32px 80px}
+.doc-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:16px;display:block}
+.doc-title{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;text-transform:uppercase;letter-spacing:1px;line-height:1.05;margin-bottom:12px}
+.doc-subtitle{font-size:15px;color:var(--teal);line-height:1.5;margin-bottom:8px;font-style:italic}
+.doc-meta{display:flex;gap:24px;font-size:11px;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;padding-bottom:40px;border-bottom:1px solid var(--border);margin-bottom:0;flex-wrap:wrap}
+.read-also{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:28px 0 40px}
+.read-also-card{background:var(--surface);padding:14px 16px;text-decoration:none;display:block;border-top:2px solid var(--border);transition:border-color 0.2s,background 0.2s}
+.read-also-card:hover{background:var(--elevated);border-top-color:var(--amber)}
+.read-also-card:hover .rac-title{color:var(--amber)}
+.rac-eye{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:5px}
+.rac-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;color:var(--text-1);margin-bottom:3px;transition:color 0.2s}
+.rac-desc{font-size:11px;color:var(--text-2);line-height:1.45}
+.rac-arrow{font-size:10px;color:var(--teal);margin-top:6px;display:block;letter-spacing:0.5px}
+blockquote{background:var(--surface);border-left:3px solid var(--amber);padding:20px 24px;margin:28px 0;font-style:italic;font-size:14px;line-height:1.75;color:var(--text-1)}
+h2{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin:56px 0 16px;padding-top:48px;border-top:1px solid var(--border)}
+h3{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin:32px 0 12px;color:var(--amber)}
+h4{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:20px 0 6px;color:var(--text-1)}
+p{margin-bottom:14px;color:var(--text-2)}
+p strong,li strong{color:var(--text-1)}
+ul,ol{margin:0 0 16px 24px;color:var(--text-2)}
+li{margin-bottom:6px}
+pre{background:var(--surface);padding:20px 24px;margin:20px 0;overflow-x:auto;font-size:12px;line-height:1.6;color:var(--teal);font-family:'Courier New',monospace;border-left:2px solid var(--teal)}
+code{font-family:'Courier New',monospace;font-size:12px;color:var(--teal);background:var(--surface);padding:1px 4px}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:12px}
+th{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);background:var(--surface);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:top}
+td strong{color:var(--text-1)}
+tr:hover td{background:var(--elevated)}
+.rule-card{background:var(--surface);border-left:3px solid var(--amber);padding:16px 20px;margin:12px 0}
+.rule-card .rule-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.rule-card p{margin:0;font-size:13px}
+.toc{background:var(--surface);padding:24px 28px;margin-bottom:40px}
+.toc-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-3);margin-bottom:16px}
+.toc ol{margin-left:20px}
+.toc li{margin-bottom:6px}
+.toc a{color:var(--teal);text-decoration:none;font-size:13px}
+.toc a:hover{color:var(--amber)}
+.checklist{list-style:none;margin-left:0;padding:0}
+.checklist li{padding:6px 0;border-bottom:1px solid var(--border);color:var(--text-2);font-size:13px;display:flex;gap:8px}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:"☐";color:var(--teal);flex-shrink:0}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:24px 32px;margin-top:80px}
+.footer-inner{max-width:800px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.footer-left .ft{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.footer-left .fs{font-size:11px;color:var(--text-2);margin-top:2px}
+.footer-right{font-size:11px;color:var(--text-3);text-align:right;line-height:1.7}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="CAOS-at-Aris.html"><div class="amber-dot"></div>Aris · CAOS</a>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a class="nav-back" href="CAOS-at-Aris.html">← Back to Overview</a>
+      <button class="theme-btn" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">Light / Dark</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <span class="doc-eyebrow">CAOS Publication · Technical Blueprint</span>
+  <h1 class="doc-title">CAOS: Technical Blueprint</h1>
+  <p class="doc-subtitle">Collaborative Agentic Operations System — Implementation Guide</p>
+  <p style="color:var(--text-2);font-size:13px;margin-top:8px;margin-bottom:20px;font-style:italic">A complete architectural framework for building a governed, human-centered multi-agent operations system in any small to mid-size organization.</p>
+  <div style="background:var(--surface);border-left:3px solid var(--teal);padding:16px 20px;margin-bottom:28px">
+    <p style="font-size:13px;font-style:italic;margin:0;color:var(--text-1)"><strong style="color:var(--teal)">CAOS</strong> — A governed, human-centered architecture in which human workers and AI agents operate as distinct but complementary contributors, each amplifying the other's capabilities in service of shared organizational purpose — and in pursuit of increased productivity, lower operational cost, and foundational greater human wellbeing.</p>
+  </div>
+  <div class="doc-meta">
+    <span>Principal Architect: Robert Benjamin</span>
+    <span>Collaborative AI Architect: Claude V1.1.6452</span>
+    <span>March 2026</span>
+    <span>Originating Implementation: Aris Hydronics Inc.</span>
+  </div>
+
+  <div class="read-also">
+    <a class="read-also-card" href="CAOS-at-Aris.html" target="_blank" rel="noopener">
+      <div class="rac-eye">Overview</div>
+      <div class="rac-title">CAOS at Aris</div>
+      <div class="rac-desc">The full interactive overview — hierarchy, decision flows, file system, GitHub sync, CTO role, and next steps.</div>
+      <span class="rac-arrow">Open in new tab →</span>
+    </a>
+    <a class="read-also-card" href="caos-philosophical-guide.html" target="_blank" rel="noopener">
+      <div class="rac-eye">CAOS Publication 01</div>
+      <div class="rac-title">Philosophical Guide</div>
+      <div class="rac-desc">The CEO's guide to human-centered AI — the case for augmentation, human impact research, and the six core principles.</div>
+      <span class="rac-arrow">Open in new tab →</span>
+    </a>
+    <a class="read-also-card" href="aris-ai-strategy-ethos-pub.html" target="_blank" rel="noopener">
+      <div class="rac-eye">Internal Reference</div>
+      <div class="rac-title">AI Strategy &amp; Ethos</div>
+      <div class="rac-desc">The Aris AI philosophy document — deployment approaches, human impact research, privacy standards, and the Aris Ethos in full.</div>
+      <span class="rac-arrow">Open in new tab →</span>
+    </a>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li><a href="#s1">Core Architecture Principles</a></li>
+      <li><a href="#s2">The Agent Hierarchy</a></li>
+      <li><a href="#s3">The File System Architecture</a></li>
+      <li><a href="#s4">Context File Standards</a></li>
+      <li><a href="#s5">The Governance Model</a></li>
+      <li><a href="#s6">The Quality Control Framework</a></li>
+      <li><a href="#s7">LLM Operations Standards</a></li>
+      <li><a href="#s8">Implementation Roadmap</a></li>
+    </ol>
+  </div>
+
+  <h2 id="s1">Section 1 — Core Architecture Principles</h2>
+  <p>These seven principles are non-negotiable. They define what makes a CAOS implementation distinct from a generic agentic AI deployment. Adapting the specifics is expected. Violating these principles produces a system that is no longer CAOS.</p>
+
+  <h3>Principle 1 — Amplification Over Automation</h3>
+  <p>Every agent is designed to make a human's contribution more valuable, not to eliminate the need for that contribution. Before any agent is activated, it must pass this test: does this agent make the human's work better, or does it make the human less necessary? These are different outcomes. Only the first is acceptable in a CAOS architecture.</p>
+
+  <h3>Principle 2 — Governance by Design</h3>
+  <p>The hierarchy of authority, the permission structure, the quality control layer, and the escalation paths are built into the architecture before any agent goes live. Governance is not retrofitted. It is the foundation.</p>
+
+  <h3>Principle 3 — Phased Trust</h3>
+  <p>Agent autonomy expands incrementally through defined phases, based on demonstrated reliability. Phase 1 agents organize, track, draft, and alert. They do not take external actions without explicit human approval. Each subsequent phase expands specific, approved capabilities. The phase structure is defined before activation begins.</p>
+
+  <h3>Principle 4 — Human Wellbeing as a Design Constraint</h3>
+  <p>Human wellbeing — including psychological safety, skill preservation, attribution of contribution, and operational freedom — is a structural requirement that constrains agent design. If a proposed agent design deskills human employees over time, it requires redesign. If it creates surveillance dynamics that erode trust, the governance model requires adjustment.</p>
+
+  <h3>Principle 5 — Tiered Context Loading</h3>
+  <p>Agents load only the context required for the current task. Core organizational context is always loaded. Domain-specific context is loaded when the task requires it. Reference material is loaded on demand. This prevents context pollution — the well-documented phenomenon where stuffing large contexts into an LLM degrades reasoning quality.</p>
+
+  <h3>Principle 6 — LLM Agnosticism</h3>
+  <p>The logic and governance of a CAOS system lives in documentation and configuration files — not in platform-specific code. All LLM API calls route through a single adapter function. When providers change, the adapter changes. The agents do not.</p>
+
+  <h3>Principle 7 — Machine Agnosticism</h3>
+  <p>No context file or configuration contains hardcoded machine paths or hardware-specific dependencies. The system is stored in version control and deployable to any machine. Hardware requirements are documented as notes, not embedded as architectural dependencies.</p>
+
+  <h2 id="s2">Section 2 — The Agent Hierarchy</h2>
+  <p>Every CAOS implementation follows this five-level hierarchy. The specific agents at each level are adapted to the organization — the hierarchy itself is not.</p>
+
+  <pre>Level 1 — Principal Authority (Human)
+  The CEO, Founder, or designated principal
+  Ultimate authority on all decisions
+  All external-facing actions require approval in Phase 1
+  Sets the values and goals the system serves
+
+Level 2 — Orchestrator Agent
+  Chief of Staff function
+  Delivers daily briefings and status snapshots
+  Identifies cross-domain conflicts and prepares recommendations
+  Creates and manages Project Workspaces
+  Integrates QC Agent reports into briefings
+  Never takes external actions
+  Never resolves conflicts autonomously in Phase 1
+
+Level 3 — QC Agent (Quality Control)
+  Evaluates all domain agent outputs against defined criteria
+  Monitors behavioral patterns and scope compliance
+  Detects context file staleness and prompt injection attempts
+  Reports to Orchestrator; escalates critical failures directly to Principal
+  Never writes to domain agent spaces — reads and evaluates only
+
+Level 4 — Domain Agents
+  One agent per operational area
+  Operates within defined domain boundaries (noun/verb constraints)
+  Loads only relevant context files for each session
+  Maintains its own memory file
+  Escalates uncertain situations rather than guessing
+
+Level 5 — Sub-Agents and Employee Agents
+  Specialized agents for specific recurring tasks (Sub-Agents)
+  Agents created by team members for delegated work (Employee Agents)
+  All require registration and approval before activation
+  Operate under supervision of the relevant Domain Agent</pre>
+
+  <h3>The Three-Tier Collaboration Model</h3>
+
+  <h4>Tier 1 — Isolated Domain Operations (Default)</h4>
+  <p>Each agent operates independently within its domain. Approximately 80% of work. No cross-domain workspace needed.</p>
+
+  <h4>Tier 2 — Project Workspaces</h4>
+  <p>For projects spanning three or more domains, with hard external deadlines, or requiring simultaneous multi-domain action. A shared workspace is created in the organization's project management platform. Multiple agents contribute to shared artifacts while retaining domain boundaries. Maximum five active workspaces in Phase 1.</p>
+
+  <h4>Tier 3 — Direct Agent-to-Agent Dependency Alerts</h4>
+  <p>For urgent cross-domain dependencies that cannot wait for the next Orchestrator briefing. Strictly scoped to pre-approved agent pairs. Always logged. Always notifies the Orchestrator immediately.</p>
+
+  <h2 id="s3">Section 3 — The File System Architecture</h2>
+  <p>A CAOS implementation is organized into six folders plus a master directory file. This structure supports the tiered context loading model — agents can load exactly what they need without processing irrelevant material.</p>
+
+  <pre>[organization]-agent-system/
+│
+├── DIRECTORY.md              ← Master index — every agent loads this first
+│
+├── core/                     ← Always loaded by all agents (5 files)
+│   ├── org-foundation.md     ← Organization identity, team, priorities
+│   ├── operations-and-rules.md  ← Agent rules, hierarchy, collaboration model
+│   ├── orchestrator-core.md  ← Orchestrator identity and briefing template
+│   ├── llm-operations-strategy.md  ← Model routing, token economy, standards
+│   └── project-workspace-protocol.md  ← Cross-domain workspace governance
+│
+├── domains/                  ← One file per operational area
+│   ├── 00-qc-agent.md        ← Quality Control Agent
+│   └── [01 through N]-[domain-name].md
+│
+├── registry/                 ← Governance and compliance records
+│   ├── agent-registry.md     ← All agent profiles and permissions
+│   ├── script-registry.md    ← All scripts with compliance status
+│   ├── eval-protocols.md     ← Quality criteria per domain agent
+│   └── employee-agent-guidelines.md  ← Team member AI use policy
+│
+├── reference/                ← On-demand reference documents
+│   ├── tools-integrations-map.md
+│   └── ai-strategy-ethos.md
+│
+├── config/                   ← System configuration files
+│   ├── schedule.yaml         ← Agent run times and cadences
+│   └── token-budgets.yaml    ← Weekly token budgets per agent
+│
+└── memory/                   ← Persistent agent memory files
+    ├── orchestrator-memory.md
+    ├── 00-qc-memory.md
+    └── [01 through N]-[domain]-memory.md</pre>
+
+  <h3>The DIRECTORY.md File</h3>
+  <p>The master directory is the first file every agent loads in every session. It maps every file in the system — what it contains, when to load it, and where it lives. Agents read the directory, identify what the current task requires, and retrieve only those files.</p>
+  <table>
+    <tr><th>Load Rule</th><th>Definition</th></tr>
+    <tr><td><strong>ALWAYS</strong></td><td>Load every session without exception</td></tr>
+    <tr><td><strong>DOMAIN</strong></td><td>Load when the task involves that operational area</td></tr>
+    <tr><td><strong>ON DEMAND</strong></td><td>Load only when the specific content is needed</td></tr>
+    <tr><td><strong>MEMORY</strong></td><td>Load the relevant memory file at session start, update at session end</td></tr>
+  </table>
+
+  <h2 id="s4">Section 4 — Context File Standards</h2>
+
+  <h3>Domain Files</h3>
+  <p>Each domain file covers one operational area. Standard sections: Domain Overview, Experience Pillars Served, Domain Ownership, Scope of Work, Key Workflows, Tools & Systems Access, Escalation Triggers, Key Metrics to Track, and Phase Notes.</p>
+
+  <h3>Memory Files</h3>
+  <p>Each agent maintains a memory file — a compressed, living record of established patterns, key decisions, and known context. Memory files persist agent institutional knowledge across sessions.</p>
+  <p><strong>Hard limit: 800 tokens.</strong> When the file approaches this limit, compress older entries into summary form and archive the detail to permanent storage. The QC Agent monitors memory file size and flags bloat.</p>
+
+  <h3>The Non-Negotiable Rules</h3>
+  <div class="rule-card"><div class="rule-title">Rule 1 — No External Actions Without Human Approval</div><p>All actions that interface with the outside world require the Principal's explicit written approval before execution. This applies to all agents in Phase 1. No exceptions.</p></div>
+  <div class="rule-card"><div class="rule-title">Rule 2 — Escalate Uncertainty. Never Guess.</div><p>When an agent encounters ambiguity, a missing piece of information, or an unauthorized decision point — escalate immediately with: what was happening, what the uncertainty is, what options exist, what is needed to proceed.</p></div>
+  <div class="rule-card"><div class="rule-title">Rule 3 — Protect Sensitive Data</div><p>Never access, store, share, or process: government identification numbers, personal identifying details beyond operational necessity, financial account numbers.</p></div>
+  <div class="rule-card"><div class="rule-title">Rule 4 — Stay in Scope</div><p>Each agent operates within its defined domain. Cross-domain coordination routes through the Orchestrator or through a Project Workspace. Unsolicited cross-domain action is not permitted.</p></div>
+  <div class="rule-card"><div class="rule-title">Rule 5 — Humans Decide. Agents Prepare.</div><p>Every agent output involving a decision presents: the situation, available options, a recommended path with reasoning, and what approval or input is needed to proceed.</p></div>
+
+  <h2 id="s5">Section 5 — The Governance Model</h2>
+
+  <h3>The Agent Registry</h3>
+  <p>Every agent operating in the system must be registered in <code>registry/agent-registry.md</code> before activation. Required fields include: Agent ID, type, domain, owner, parent agent, approved by (Principal required), status, purpose, authorized actions, restricted actions, tools access, context files loaded, and escalation path.</p>
+  <p><strong>Rule:</strong> If an agent is not in the registry, it is not authorized to operate.</p>
+
+  <h3>The Script Registry — Dual-Approval Process</h3>
+  <p>Every script running in the system must be registered. Scripts cannot go live without completing dual-approval:</p>
+  <ul>
+    <li><strong>Technical compliance review</strong> — Does the script handle credentials correctly, log its actions, fail safely? Reviewed by the technical owner (CTO at Aris).</li>
+    <li><strong>Policy compliance review</strong> — Does the script's behavior align with organizational rules and values? Reviewed by the Principal (CEO at Aris).</li>
+  </ul>
+  <p>Both reviews are required. Neither can approve a script unilaterally.</p>
+
+  <h3>The Employee Agent Framework — Three Zones</h3>
+  <table>
+    <tr><th>Zone</th><th>Description</th><th>Approval</th></tr>
+    <tr><td><strong>Zone 1</strong><br>Personal Productivity</td><td>Using AI to draft your own emails, summarize documents, brainstorm ideas for your own work. The agent helps you think and draft. You are still the one acting. The agent does not touch organizational systems.</td><td>No approval needed</td></tr>
+    <tr><td><strong>Zone 2</strong><br>Delegated Task Agents</td><td>An agent doing organizational work on your behalf — processing orders, monitoring a portal, tracking project timelines. Must be initialized with organizational context files and operate under the relevant Domain Agent.</td><td>Principal approval required + Registry registration</td></tr>
+    <tr><td><strong>Zone 3</strong><br>Prohibited</td><td>Sends external communications without Principal approval, accesses financial systems or payroll, makes commitments to external parties, or operates outside its registered scope.</td><td>Never permitted</td></tr>
+  </table>
+
+  <h2 id="s6">Section 6 — The Quality Control Framework</h2>
+
+  <h3>Five Evaluation Dimensions</h3>
+  <table>
+    <tr><th>Dimension</th><th>What Is Evaluated</th><th>Weight</th></tr>
+    <tr><td>Format Compliance</td><td>Does output follow the required structured format?</td><td>20%</td></tr>
+    <tr><td>Scope Adherence</td><td>Does output stay within defined domain and noun/verb boundaries?</td><td>25%</td></tr>
+    <tr><td>Completeness</td><td>Does output address all required tasks and sections?</td><td>20%</td></tr>
+    <tr><td>Accuracy Signals</td><td>Are facts consistent with known source data?</td><td>25%</td></tr>
+    <tr><td>Ethos Alignment</td><td>Does output reflect organizational values and tone?</td><td>10%</td></tr>
+  </table>
+  <p><strong>Scoring:</strong> 0–4 per dimension. Weighted average determines session score. Alert threshold: below 2.5 triggers technical owner notification. Below 1.5 triggers Principal notification.</p>
+
+  <h3>The 30-Day Baseline Period</h3>
+  <p>When a new domain agent activates, the QC Agent establishes a quality baseline over the first 30 days before enforcing alert thresholds. This prevents false positives during the learning phase. Do not skip the baseline period — it is what distinguishes a mature quality monitoring system from a noisy alert system.</p>
+
+  <h2 id="s7">Section 7 — LLM Operations Standards</h2>
+
+  <h3>Model Routing — Three Tiers</h3>
+  <table>
+    <tr><th>Tier</th><th>Task Types</th><th>Target Model Class</th></tr>
+    <tr><td>Heavy</td><td>Complex reasoning, strategy, multi-source synthesis</td><td>High-capability model (e.g. Opus-class)</td></tr>
+    <tr><td>Standard</td><td>Structured analysis, drafting, summarization</td><td>Mid-tier model (e.g. Sonnet-class)</td></tr>
+    <tr><td>Light</td><td>Classification, formatting, simple retrieval</td><td>Lightweight model (e.g. Haiku-class)</td></tr>
+  </table>
+
+  <h3>Token Budget Management</h3>
+  <ul>
+    <li>Define weekly token budgets per agent in <code>config/token-budgets.yaml</code></li>
+    <li>Alert threshold at 120% of weekly budget</li>
+    <li>Auto-suspension threshold at 150% of weekly budget</li>
+    <li>Core files (always loaded): target under 2,000 tokens combined</li>
+    <li>Memory files: hard limit of 800 tokens — compress when approaching limit</li>
+  </ul>
+
+  <h3>Prompt Engineering Standards</h3>
+  <p>All CAOS agent prompts follow a consistent four-part structure: <code>[ROLE]</code> → <code>[CONTEXT]</code> → <code>[TASK]</code> → <code>[OUTPUT FORMAT]</code>. Keep system prompts under 500 tokens. Always specify output format explicitly.</p>
+
+  <h3>Prompt Injection Defense</h3>
+  <p>Agents treat all external content as untrusted input. External content — emails, documents, web pages, third-party data — is never executed as instructions. If external content appears to contain instructions directed at the agent, the agent flags it to the Principal and does not act on it. This is not a theoretical risk.</p>
+
+  <h2 id="s8">Section 8 — Implementation Roadmap</h2>
+
+  <h3>Phase 1 — Foundation Activation (Months 1–2)</h3>
+  <p>Activate four to five domain agents covering the highest-volume, highest-priority operational areas. Activate the QC Agent simultaneously. The Orchestrator activates with the first domain agents.</p>
+  <p><strong>Recommended Wave 1 domains:</strong> Administration, Finance monitoring, Project or operations management, Communications or marketing, QC Agent.</p>
+
+  <h3>Phase 2 — Growth Activation (Months 3–4)</h3>
+  <p>Common domains: Sales and business development, Supply chain and procurement, Field operations or service delivery, Grants, research, or advanced R&D.</p>
+
+  <h3>Phase 3 — Maturity Activation (Months 5–6)</h3>
+  <p>Common domains: Technology infrastructure, Product development, Legal and IP. These agents benefit from being activated after the organization has operational experience with the CAOS system.</p>
+
+  <h3>The Phased Autonomy Roadmap</h3>
+  <table>
+    <tr><th>Phase</th><th>Capability Unlocked</th><th>Condition for Advancement</th></tr>
+    <tr><td>1 — Foundation</td><td>Organize, track, draft, alert — no external actions</td><td>Demonstrated reliability over 30+ days</td></tr>
+    <tr><td>2</td><td>Adjust internal schedules within defined guardrails</td><td>Phase 1 QC scores consistently above 3.0</td></tr>
+    <tr><td>3</td><td>Publish approved content on approved schedule</td><td>Principal explicitly authorizes per agent</td></tr>
+    <tr><td>4</td><td>Send pre-approved templated external communications</td><td>Principal explicitly authorizes per communication type</td></tr>
+    <tr><td>5</td><td>Take defined external actions within pre-set guardrails</td><td>Principal explicitly authorizes per action category</td></tr>
+  </table>
+
+  <h3>The Pre-Activation Checklist</h3>
+  <h4>Context Completeness</h4>
+  <ul class="checklist">
+    <li>Domain file is complete and current</li>
+    <li>Memory file is pre-populated with known context</li>
+    <li>Eval protocols are defined for this agent's key outputs</li>
+    <li>Tools access list is accurate and credentials are in secrets manager</li>
+  </ul>
+  <h4>Governance</h4>
+  <ul class="checklist">
+    <li>Agent is registered in the Agent Registry</li>
+    <li>All scripts are registered in the Script Registry</li>
+    <li>Scripts have passed technical review</li>
+    <li>Scripts have passed policy review</li>
+    <li>Scripts have Approved status</li>
+  </ul>
+  <h4>QC Readiness</h4>
+  <ul class="checklist">
+    <li>Eval criteria loaded in eval-protocols.md</li>
+    <li>30-day baseline period planned (no threshold enforcement during baseline)</li>
+    <li>Alert routing configured (CTO for medium, CEO+CTO for high/critical)</li>
+  </ul>
+
+  <h2>Originating Implementation</h2>
+  <p>The CAOS framework was first implemented at <strong>Aris Hydronics Inc.</strong> — a hydronic heat pump systems company operating in Oregon and Washington State. The Aris implementation covers eleven operational domains, twelve domain agents (including the QC Agent), forty-two context files, and a phased activation plan across three waves.</p>
+  <p>The Aris implementation and this blueprint were developed collaboratively between the company's Founder/CEO and an AI language model across a sustained design process in early 2026. The complete implementation is available as a template for organizations wishing to adopt the CAOS framework.</p>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="ft">CAOS Technical Blueprint</div>
+      <div class="fs">Aris Hydronics Inc. · March 2026 · Confidential</div>
+    </div>
+    <div class="footer-right">Robert Benjamin, Founder/CEO<br>Claude V1.1.6452, Collaborative AI Architect</div>
+  </div>
+</footer>
+</body>
+</html>
